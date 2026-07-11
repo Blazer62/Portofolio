@@ -45,7 +45,7 @@
             document.getElementById('projectId').value = '';
             document.getElementById('projectTitle').value = '';
             document.getElementById('projectDesc').value = '';
-            document.getElementById('projectImg').value = '';
+            document.getElementById('projectImgUrl').value = '';
             document.getElementById('projectLink').value = '';
             document.getElementById('projectTech').value = '';
             form.action = '{{ route("projects.store") }}';
