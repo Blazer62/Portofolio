@@ -14,6 +14,16 @@
     var form = document.getElementById('projectForm');
     var methodInput = document.getElementById('formMethod');
 
+    document.getElementById('projectImg').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            document.getElementById('projectImgUrl').value = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
     window.openEditModal = function(project) {
         openModal('addModal');
         document.getElementById('modalTitle').innerText = 'Edit Project';
@@ -22,6 +32,7 @@
         document.getElementById('projectId').value = project.id;
         document.getElementById('projectTitle').value = project.title;
         document.getElementById('projectDesc').value = project.description;
+        document.getElementById('projectImgUrl').value = project.image_url || '';
         document.getElementById('projectImg').value = '';
         document.getElementById('projectLink').value = project.live_link;
         document.getElementById('projectTech').value = project.tech_stack;

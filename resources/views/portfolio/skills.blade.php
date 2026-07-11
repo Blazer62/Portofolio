@@ -50,10 +50,6 @@
                         <span class="text-emerald-500 font-bold">XAMPP</span>
                         <span class="text-sm font-semibold">XAMPP</span>
                     </div>
-                    <div class="flex items-center gap-3 px-5 py-3 rounded-xl border dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-200">
-                        <span class="text-emerald-500 font-bold">HERD</span>
-                        <span class="text-sm font-semibold">Laravel Herd</span>
-                    </div>
                 </div>
             </div>
         </div>

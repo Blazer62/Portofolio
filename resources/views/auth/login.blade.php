@@ -45,7 +45,7 @@
                     <label class="block text-sm font-semibold mb-2">Email</label>
                     <input type="email" name="email" value="{{ old('email') }}" required autofocus
                         class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                        placeholder="admin@admin.com" />
+                        placeholder="" />
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2">Password</label>

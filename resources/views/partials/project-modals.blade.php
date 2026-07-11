@@ -23,24 +23,26 @@
                     class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all resize-none dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
                     placeholder="Jelaskan fitur utama..."></textarea>
             </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2">Gambar Project (Opsional)</label>
+                <input type="file" name="image" id="projectImg" accept="image/*"
+                    class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-500 file:text-zinc-950 file:font-semibold file:text-sm hover:file:bg-emerald-600" />
+                <p class="text-xs dark:text-zinc-500 text-zinc-400 mt-1">Gambar akan otomatis dikonversi ke link.</p>
+                <input type="hidden" name="image_url" id="projectImgUrl" value="">
+            </div>
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Gambar Project (Opsional)</label>
-                    <input type="file" name="image" id="projectImg" accept="image/*"
-                        class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-500 file:text-zinc-950 file:font-semibold file:text-sm hover:file:bg-emerald-600" />
-                </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2">Live Link (Opsional)</label>
                     <input type="text" name="live_link" id="projectLink"
                         class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
                         placeholder="https://..." />
                 </div>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold mb-2">Tech Stack (Pisahkan koma)</label>
-                <input type="text" name="tech_stack" id="projectTech" required
-                    class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                    placeholder="PHP, MySQL, Tailwind" />
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tech Stack (Pisahkan koma)</label>
+                    <input type="text" name="tech_stack" id="projectTech" required
+                        class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
+                        placeholder="PHP, MySQL, Tailwind" />
+                </div>
             </div>
 
             <div class="pt-4 flex gap-3">
