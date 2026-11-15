@@ -24,7 +24,9 @@ echo Alamat : http://127.0.0.1:8000
 echo Stop   : tekan CTRL+C
 echo.
 
-php artisan serve --no-reload --host=127.0.0.1 --port=8000
+rem Fix bug Windows ada di app\Providers\AppServiceProvider.php,
+rem jadi perintah biasa di bawah ini sudah bisa jalan.
+php artisan serve --host=127.0.0.1 --port=8000
 
 echo.
 echo Server berhenti.

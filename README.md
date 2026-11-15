@@ -25,13 +25,22 @@ composer install          # sekali saja
 cp .env.example .env      # sekali saja
 php artisan key:generate  # sekali saja
 php artisan migrate --seed
-php artisan serve --no-reload
+php artisan serve
 ```
 
-> **Kenapa `--no-reload`?** Laravel 13 punya fitur auto-reload yang membuang variabel
-> environment `$_ENV`. Di Windows, variabel `SystemRoot` ikut terbuang sehingga socket
-> server gagal dibuat dan muncul error `Failed to listen on 127.0.0.1:8000 (reason: ?)`.
-> Flag `--no-reload` mematikan perilaku itu.
+> **Catatan untuk Windows.** Di Laravel 13, `artisan serve` menjalankan PHP server sebagai
+> proses anak dan hanya meneruskan variabel environment yang cocok dengan
+> `ServeCommand::$passthroughVariables`. Ada dua bug yang membuatnya gagal di Windows:
+>
+> 1. Daftar itu menulis `SYSTEMROOT` (kapital), sedangkan Windows memberi nama
+>    `SystemRoot`. Karena `in_array()` case-sensitive, variabel itu ikut terhapus sehingga
+>    socket gagal dibuat: `Failed to listen on 127.0.0.1:8000 (reason: ?)`.
+> 2. `APP_ENV` ikut diteruskan, sehingga proses anak mencari `.env.local` (file yang dibuat
+>    otomatis oleh `vercel link` dan hanya berisi `VERCEL_OIDC_TOKEN`) sehingga muncul
+>    `MissingAppKeyException`.
+>
+> Keduanya diperbaiki di `app/Providers/AppServiceProvider.php`, jadi `php artisan serve`
+> biasa sudah bisa dipakai tanpa flag tambahan.
 
 Database lokal memakai SQLite (`database/database.sqlite`), terpisah dari database
 production di Neon.
