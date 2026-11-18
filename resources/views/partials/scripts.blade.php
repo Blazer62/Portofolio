@@ -19,7 +19,8 @@
         closeIcon.classList.add('hidden');
     }
 
-    toggle.addEventListener('click', function() {
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
         if (menu.style.display === 'block') {
             closeMenu();
         } else {
@@ -28,7 +29,13 @@
     });
 
     links.forEach(function(link) {
-        link.addEventListener('click', closeMenu);
+        link.addEventListener('click', function() {
+            var href = link.getAttribute('href') || '';
+            // Hanya tutup menu bila itu anchor di halaman yang sama
+            if (href.charAt(0) === '#' || (href.indexOf('#') !== -1 && href.indexOf(window.location.pathname) !== -1)) {
+                closeMenu();
+            }
+        });
     });
 
     document.addEventListener('click', function(e) {
@@ -407,16 +414,16 @@ window.openLightbox = function(src) {
 
         // Link ke halaman yang sama dengan beda hash juga tidak perlu reload.
         if (url.pathname === window.location.pathname && url.search === window.location.search) {
-            e.preventDefault();
             if (url.hash) {
+                e.preventDefault();
                 scrollToHash(url.hash);
             }
             return;
         }
 
-        e.preventDefault();
-        document.body.classList.add('page-exit');
-        setTimeout(function() { window.location.href = url.href; }, 200);
+        // Untuk link ke halaman lain (CV, Blog, Projects, Login, dsb):
+        // Biarkan browser melakukan navigasi alami tanpa e.preventDefault().
+        // Ini memastikan klik link 100% berfungsi di iframe, extension mobile simulator, smartphone, dan desktop.
     });
 
     // Kembalikan halaman ke kondisi normal, termasuk saat browser memakai bfcache.
