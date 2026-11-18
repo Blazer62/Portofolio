@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\SiteProfile;
 use Illuminate\Foundation\Console\ServeCommand;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +23,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Pastikan seluruh form, asset, dan link selalu menggunakan HTTPS saat online
+        if ($this->app->environment('production')
+            || request()->header('x-forwarded-proto') === 'https'
+            || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+            URL::forceScheme('https');
+        }
+
         $this->fixWindowsServeCommand();
         $this->shareSiteProfile();
     }

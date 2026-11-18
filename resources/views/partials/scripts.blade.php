@@ -377,8 +377,9 @@ window.openLightbox = function(src) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         revealSection(target);
 
+        // Jangan tambahkan tanda # ke bilah URL agar URL tetap bersih tanpa #proyek atau #skill
         if (history.replaceState) {
-            history.replaceState(null, '', hash);
+            history.replaceState(null, '', window.location.pathname + window.location.search);
         }
     }
 
