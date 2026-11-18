@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gusti Rizky Ananda | Fullstack Developer</title>
+    <title>@yield('title', ($siteProfile->name ?? 'Portofolio').' | '.($siteProfile->headline ?? 'Frontend Developer'))</title>
+    <meta name="description" content="@yield('description', $siteProfile->tagline ?? 'Portofolio frontend developer')">
+    <meta name="theme-color" content="#10b981">
+
+    <script>
+        // Cegah kedip saat mode terang tersimpan.
+        if (localStorage.theme === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,7 +40,7 @@
     @include('partials.particles')
 
     @if(session('success'))
-    <div id="success-notif" class="fixed top-0 w-full bg-emerald-500 text-white p-3 text-center z-50 text-sm font-semibold">
+    <div id="success-notif" class="fixed top-0 w-full bg-emerald-500 text-white p-3 text-center z-[120] text-sm font-semibold">
         {{ session('success') }}
     </div>
     <script>
@@ -42,23 +51,29 @@
     </script>
     @endif
 
-    <div class="fixed top-0 left-0 right-0 z-50 loading-bar"></div>
+    @if($errors->any())
+    <div class="fixed top-0 w-full bg-red-500 text-white p-3 text-center z-[120] text-sm font-semibold">
+        {{ $errors->first() }}
+    </div>
+    @endif
+
+    <div class="no-print fixed top-0 left-0 right-0 z-[60] loading-bar"></div>
 
     @include('partials.navbar')
 
-    <button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/30 flex items-center justify-center hover:bg-emerald-600 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 invisible">
+    <button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Kembali ke atas"
+        class="no-print fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/30 flex items-center justify-center hover:bg-emerald-600 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 invisible">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
-    <main class="relative z-10">
+    <main class="relative z-10 page-enter">
         @yield('content')
     </main>
 
     @include('partials.footer')
     @include('partials.project-modals')
-    @include('partials.toast')
     @include('partials.scripts')
 
     @stack('scripts')
 </body>
-</html> 
+</html>

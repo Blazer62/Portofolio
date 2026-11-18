@@ -1,81 +1,56 @@
-<div id="addModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm overflow-y-auto">
-    <div class="w-full max-w-lg rounded-[2rem] shadow-2xl p-8 relative border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200">
-        <button onclick="closeModal('addModal')" class=" absolute top-6 right-6 p-2 rounded-full transition-colors dark:hover:bg-zinc-800 hover:bg-zinc-100">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+<div id="previewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm" onclick="if (event.target === this) closeModal('previewModal')">
+    <div class="preview-scroll w-full max-w-3xl rounded-[2rem] shadow-2xl border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200">
+        <div class="relative">
+            <img id="previewImage" src="" alt="" class="hidden w-full h-64 md:h-80 object-cover rounded-t-[2rem]">
+            <button onclick="closeModal('previewModal')" aria-label="Tutup"
+                class="absolute top-4 right-4 w-10 h-10 rounded-full bg-zinc-950/70 text-white flex items-center justify-center hover:bg-red-500 transition-colors backdrop-blur">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
 
-        <h2 id="modalTitle" class="text-2xl font-bold mb-6">Project Baru</h2>
+        <div class="p-6 md:p-8">
+            <span id="previewCategory" class="hidden inline-block text-[11px] uppercase tracking-widest font-bold text-emerald-500 mb-2"></span>
+            <h2 id="previewTitle" class="text-2xl md:text-3xl font-extrabold tracking-tight mb-3"></h2>
+            <p id="previewDescription" class="text-sm md:text-base leading-relaxed dark:text-zinc-400 text-zinc-600 mb-6"></p>
 
-        <form id="projectForm" method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data" class="space-y-5">
-            @csrf
-            <input type="hidden" name="id" id="projectId" value="">
-            <input type="hidden" id="formMethod" value="POST">
-
-            <div>
-                <label class="block text-sm font-semibold mb-2">Judul Project</label>
-                <input type="text" name="title" id="projectTitle" required
-                    class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                    placeholder="Contoh: Sistem Informasi Akademik" />
-            </div>
-            <div>
-                <label class="block text-sm font-semibold mb-2">Deskripsi</label>
-                <textarea name="description" id="projectDesc" required rows="3"
-                    class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all resize-none dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                    placeholder="Jelaskan fitur utama..."></textarea>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold mb-2">Link Gambar (Opsional)</label>
-                <input type="url" name="image_url" id="projectImgUrl"
-                    class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                    placeholder="https://i.imgur.com/xxxxx.png" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Live Link (Opsional)</label>
-                    <input type="text" name="live_link" id="projectLink"
-                        class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                        placeholder="https://..." />
+            <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                <div class="rounded-2xl border dark:border-zinc-800 border-zinc-200 p-4">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-emerald-500 mb-2">Masalah</h4>
+                    <p id="previewProblem" class="text-sm leading-relaxed dark:text-zinc-400 text-zinc-600"></p>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Tech Stack (Pisahkan koma)</label>
-                    <input type="text" name="tech_stack" id="projectTech" required
-                        class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 outline-none transition-all dark:bg-zinc-950 dark:border-zinc-800 bg-zinc-50 border-zinc-300"
-                        placeholder="PHP, MySQL, Tailwind" />
+                <div class="rounded-2xl border dark:border-zinc-800 border-zinc-200 p-4">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-emerald-500 mb-2">Tujuan</h4>
+                    <p id="previewGoal" class="text-sm leading-relaxed dark:text-zinc-400 text-zinc-600"></p>
+                </div>
+                <div class="rounded-2xl border dark:border-zinc-800 border-zinc-200 p-4">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-emerald-500 mb-2">Peran</h4>
+                    <p id="previewRole" class="text-sm leading-relaxed dark:text-zinc-400 text-zinc-600"></p>
                 </div>
             </div>
 
-            <div class="pt-4 flex gap-3">
-                <button type="button" onclick="closeModal('addModal')" class=" flex-1 py-3 rounded-xl font-bold transition-colors dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white bg-zinc-200 hover:bg-zinc-300 text-zinc-900">
-                    Batal
-                </button>
-                <button type="submit" id="submitBtn" class=" flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold transition-colors shadow-lg shadow-emerald-500/20">
-                    Publish Project
-                </button>
+            <div class="mb-6">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-emerald-500 mb-3">Fitur Utama</h4>
+                <ul id="previewFeatures" class="grid sm:grid-cols-2 gap-2 text-sm dark:text-zinc-300 text-zinc-700"></ul>
             </div>
-        </form>
+
+            <div class="mb-8">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-emerald-500 mb-3">Teknologi</h4>
+                <div id="previewTech" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-6 border-t dark:border-zinc-800 border-zinc-200">
+                <a id="previewDetail" href="#" class="px-5 py-2.5 rounded-full text-sm font-bold bg-emerald-500 text-zinc-950 hover:bg-emerald-600 transition-colors">Detail Proyek</a>
+                <a id="previewLive" href="#" target="_blank" rel="noopener" class="px-5 py-2.5 rounded-full text-sm font-bold border dark:border-zinc-700 border-zinc-300 dark:text-zinc-200 text-zinc-700 hover:border-emerald-500 hover:text-emerald-500 transition-colors">Lihat Demo</a>
+                <a id="previewGithub" href="#" target="_blank" rel="noopener" class="px-5 py-2.5 rounded-full text-sm font-bold border dark:border-zinc-700 border-zinc-300 dark:text-zinc-200 text-zinc-700 hover:border-emerald-500 hover:text-emerald-500 transition-colors">Source Code</a>
+                <button onclick="closeModal('previewModal')" class="ml-auto px-5 py-2.5 rounded-full text-sm font-bold dark:bg-zinc-800 dark:text-zinc-200 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Tutup</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="deleteModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm">
-    <div class="w-full max-w-sm rounded-[2rem] shadow-2xl p-8 text-center border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200">
-        <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-        </div>
-        <h3 class="text-xl font-bold mb-2">Hapus Project?</h3>
-        <p class="mb-8 text-sm dark:text-zinc-400 text-zinc-500">Project ini akan dihapus secara permanen dari database.</p>
-
-        <form id="deleteForm" method="POST" action="">
-            @csrf
-            @method('DELETE')
-            <input type="hidden" name="id" id="deleteProjectId" value="">
-            <div class="flex gap-3">
-                <button type="button" onclick="closeModal('deleteModal')" class=" flex-1 py-3 rounded-xl font-bold transition-colors dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white bg-zinc-200 hover:bg-zinc-300 text-zinc-900">
-                    Batal
-                </button>
-                <button type="submit" class=" flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold transition-colors">
-                    Hapus
-                </button>
-            </div>
-        </form>
-    </div>
+<div id="lightbox" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-sm" onclick="if (event.target === this) closeModal('lightbox')">
+    <button onclick="closeModal('lightbox')" aria-label="Tutup" class="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-red-500 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <img id="lightboxImage" src="" alt="Dokumentasi" class="max-h-[85vh] max-w-full rounded-2xl shadow-2xl">
 </div>

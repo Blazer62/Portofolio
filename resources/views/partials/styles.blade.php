@@ -2,6 +2,8 @@
     body { font-family: 'Outfit', sans-serif; }
     html { scroll-behavior: smooth; }
 
+    section[id] { scroll-margin-top: 100px; }
+
     .animate-on-scroll {
         opacity: 0; transform: translateY(40px);
         transition: opacity 0.8s ease-out, transform 0.8s ease-out;
@@ -54,39 +56,26 @@
         pointer-events: none; z-index: 0;
     }
 
+    /*
+     * Efek glitch memakai text-shadow, bukan pseudo-element absolut.
+     * Pseudo-element absolut memakai kotak baris pertama saja sehingga
+     * teks bayangan tidak ikut ter-wrap saat judul jadi dua baris
+     * (terlihat seperti teks bertumpuk di tablet).
+     */
     .glitch-text {
-        position: relative;
+        display: inline-block;
+        animation: glitch-shadow 3s infinite linear alternate-reverse;
     }
-    .glitch-text::before,
-    .glitch-text::after {
-        content: attr(data-text);
-        position: absolute; top: 0; left: 0;
-        width: 100%; height: 100%;
+    @keyframes glitch-shadow {
+        0%, 100% { text-shadow: 0 0 0 transparent; }
+        15% { text-shadow: -2px 2px 0 rgba(243, 139, 168, .45), 2px -2px 0 rgba(137, 180, 250, .35); }
+        30% { text-shadow: 2px -2px 0 rgba(243, 139, 168, .35), -2px 2px 0 rgba(137, 180, 250, .45); }
+        50% { text-shadow: 0 0 0 transparent; }
+        70% { text-shadow: -1.5px -1.5px 0 rgba(243, 139, 168, .3), 1.5px 1.5px 0 rgba(137, 180, 250, .3); }
+        85% { text-shadow: 0 0 0 transparent; }
     }
-    .glitch-text::before {
-        color: #f38ba8;
-        z-index: -1;
-        animation: glitch-offset 3s infinite linear alternate-reverse;
-    }
-    .glitch-text::after {
-        color: #89b4fa;
-        z-index: -2;
-        animation: glitch-offset2 2s infinite linear alternate-reverse;
-    }
-    @keyframes glitch-offset {
-        0% { transform: translate(0); }
-        20% { transform: translate(-2px, 2px); }
-        40% { transform: translate(-2px, -2px); }
-        60% { transform: translate(2px, 2px); }
-        80% { transform: translate(2px, -2px); }
-        100% { transform: translate(0); }
-    }
-    @keyframes glitch-offset2 {
-        0% { transform: translate(0); }
-        25% { transform: translate(3px, -1px); }
-        50% { transform: translate(-3px, 1px); }
-        75% { transform: translate(1px, 3px); }
-        100% { transform: translate(-1px, -3px); }
+    @media (prefers-reduced-motion: reduce) {
+        .glitch-text { animation: none; }
     }
 
     .cursor-blink {
@@ -373,5 +362,135 @@
             grid-template-columns: 1fr;
             gap: 40px;
         }
+    }
+
+    /* ---------- Transisi antar halaman ---------- */
+    .page-enter {
+        animation: pageIn .55s cubic-bezier(.22, .61, .36, 1) both;
+    }
+    body.page-exit {
+        opacity: 0;
+        transition: opacity .22s ease;
+    }
+    @keyframes pageIn {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* Animasi singkat saat melompat ke section lewat navigasi/footer. */
+    .section-enter {
+        animation: sectionIn .55s cubic-bezier(.22, .61, .36, 1) both;
+    }
+    @keyframes sectionIn {
+        from { opacity: .25; transform: translateY(16px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* ---------- Judul section ---------- */
+    .section-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: #10b981;
+    }
+    .section-kicker::before {
+        content: '';
+        width: 34px;
+        height: 3px;
+        border-radius: 999px;
+        background: #10b981;
+    }
+
+    /* ---------- Skill bar ---------- */
+    .skill-track {
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #e4e4e7;
+    }
+    .dark .skill-track { background: #27272a; }
+    .skill-fill {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #10b981, #34d399);
+        transition: width 1.2s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    /* ---------- Filter proyek ---------- */
+    .filter-btn {
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        border: 1px solid #e4e4e7;
+        color: #52525b;
+        background: #fff;
+        transition: all .25s ease;
+    }
+    .dark .filter-btn {
+        border-color: #27272a;
+        color: #a1a1aa;
+        background: #18181b;
+    }
+    .filter-btn:hover { border-color: #10b981; color: #059669; }
+    .filter-btn.active {
+        background: #10b981;
+        border-color: #10b981;
+        color: #18181b;
+    }
+
+    /* ---------- Timeline ---------- */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 6px;
+        bottom: 6px;
+        width: 2px;
+        background: linear-gradient(180deg, #10b981, rgba(16, 185, 129, .1));
+    }
+    .timeline-item { position: relative; padding-bottom: 28px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -28px;
+        top: 6px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #10b981;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, .15);
+    }
+    .dark .timeline-item::before { border-color: #18181b; }
+
+    /* ---------- Modal preview ---------- */
+    .preview-scroll { max-height: 88vh; overflow-y: auto; }
+
+    /* ---------- Cetak CV ---------- */
+    @media print {
+        body { background: #fff !important; color: #111 !important; }
+        #particles-canvas, nav, footer, #scrollTopBtn, .loading-bar, .no-print { display: none !important; }
+        main { padding: 0 !important; }
+        .print-card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            background: #fff !important;
+        }
+        @page { margin: 14mm; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .page-enter { animation: none; }
+        .section-enter { animation: none; }
+        html { scroll-behavior: auto; }
     }
 </style>

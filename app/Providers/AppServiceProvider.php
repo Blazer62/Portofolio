@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\SiteProfile;
 use Illuminate\Foundation\Console\ServeCommand;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +23,23 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->fixWindowsServeCommand();
+        $this->shareSiteProfile();
+    }
+
+    /**
+     * Bagikan data profil ke seluruh view agar navbar/footer/CV konsisten.
+     */
+    protected function shareSiteProfile(): void
+    {
+        View::composer('*', function ($view) {
+            try {
+                $profile = SiteProfile::first() ?? new SiteProfile(['name' => 'Portofolio']);
+            } catch (\Throwable $e) {
+                $profile = new SiteProfile(['name' => 'Portofolio']);
+            }
+
+            $view->with('siteProfile', $profile);
+        });
     }
 
     /**

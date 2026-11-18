@@ -43,7 +43,7 @@ const typewriterEl2 = document.getElementById('typewriter2');
 if (typewriterEl && typewriterEl2) {
 const lines = [
     { el: typewriterEl, text: "const developer = {", speed: 40 },
-    { el: typewriterEl2, text: '  name: "Gusti Rizky Ananda"', speed: 30 }
+    { el: typewriterEl2, text: '  fokus: "Frontend Development"', speed: 30 }
 ];
 
 function typeLine(lineObj, callback) {
@@ -107,11 +107,11 @@ const observerOptions = {
     threshold: 0.15
 };
 
-const observer = new IntersectionObserver((entries, observer) => {
+const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
+            obs.unobserve(entry.target);
         }
     });
 }, observerOptions);
@@ -121,13 +121,17 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
 });
 
 function openModal(id) {
-    document.getElementById(id).classList.remove('hidden');
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal(id) {
-    document.getElementById(id).classList.add('hidden');
-    document.body.style.overflow = 'auto';
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('hidden');
+    document.body.style.overflow = '';
 }
 
 document.querySelectorAll('[data-tilt]').forEach(card => {
@@ -173,9 +177,8 @@ document.querySelectorAll('[data-tilt]').forEach(card => {
 
     counters.forEach(function(c) { obs.observe(c); });
 })();
-</script>
 
-<script>
+/* Scroll to top */
 (function() {
     var btn = document.getElementById('scrollTopBtn');
     if (!btn) return;
@@ -187,6 +190,251 @@ document.querySelectorAll('[data-tilt]').forEach(card => {
             btn.classList.add('opacity-0', 'invisible');
             btn.classList.remove('opacity-100', 'visible');
         }
+    });
+})();
+
+/* Progress bar skill muncul saat terlihat */
+(function() {
+    var bars = document.querySelectorAll('.skill-fill[data-width]');
+    if (!bars.length) return;
+
+    var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var el = entry.target;
+                el.style.width = el.getAttribute('data-width') + '%';
+                obs.unobserve(el);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    bars.forEach(function(bar) { obs.observe(bar); });
+})();
+
+/* Pencarian & filter proyek */
+(function() {
+    var search = document.getElementById('projectSearch');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.project-card'));
+    var filterBtns = Array.prototype.slice.call(document.querySelectorAll('.filter-btn[data-filter]'));
+    var empty = document.getElementById('projectEmpty');
+    if (!cards.length && !empty) return;
+
+    var activeFilter = 'all';
+
+    function apply() {
+        var q = (search ? search.value : '').toLowerCase().trim();
+        var visible = 0;
+
+        cards.forEach(function(card) {
+            var haystack = (card.getAttribute('data-search') || '').toLowerCase();
+            var tech = (card.getAttribute('data-tech') || '').toLowerCase();
+            var matchQuery = !q || haystack.indexOf(q) !== -1;
+            var matchFilter = activeFilter === 'all' || tech.indexOf(activeFilter.toLowerCase()) !== -1;
+
+            if (matchQuery && matchFilter) {
+                card.style.display = '';
+                visible++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (empty) {
+            empty.classList.toggle('hidden', visible !== 0);
+        }
+    }
+
+    if (search) {
+        search.addEventListener('input', apply);
+    }
+
+    filterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            activeFilter = btn.getAttribute('data-filter');
+            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            apply();
+        });
+    });
+})();
+
+/* Preview proyek */
+window.openProjectPreview = function(button) {
+    var data;
+    try {
+        data = JSON.parse(button.getAttribute('data-project'));
+    } catch (e) {
+        return;
+    }
+
+    function setText(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (value) {
+            el.innerHTML = value;
+            el.classList.remove('hidden');
+        } else {
+            el.textContent = '';
+            el.classList.add('hidden');
+        }
+    }
+
+    function setBlock(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('hidden', !value);
+        if (value) el.textContent = value;
+    }
+
+    var img = document.getElementById('previewImage');
+    if (img) {
+        if (data.image) {
+            img.src = data.image;
+            img.classList.remove('hidden');
+        } else {
+            img.classList.add('hidden');
+        }
+    }
+
+    setText('previewTitle', data.title || '');
+    setText('previewCategory', data.category || '');
+    setText('previewDescription', data.description || '');
+    setBlock('previewProblem', data.problem || '');
+    setBlock('previewGoal', data.goal || '');
+    setBlock('previewRole', data.role || '');
+
+    var features = document.getElementById('previewFeatures');
+    if (features) {
+        features.innerHTML = '';
+        (data.features || []).forEach(function(feature) {
+            var li = document.createElement('li');
+            li.className = 'flex items-start gap-2';
+            li.innerHTML = '<span class="text-emerald-500 mt-0.5">&#10003;</span><span>' + feature + '</span>';
+            features.appendChild(li);
+        });
+        features.parentElement.classList.toggle('hidden', !(data.features || []).length);
+    }
+
+    var tech = document.getElementById('previewTech');
+    if (tech) {
+        tech.innerHTML = '';
+        (data.tech || []).forEach(function(item) {
+            var span = document.createElement('span');
+            span.className = 'text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md dark:bg-zinc-800 dark:text-zinc-300 bg-zinc-100 text-zinc-600';
+            span.textContent = item;
+            tech.appendChild(span);
+        });
+        tech.parentElement.classList.toggle('hidden', !(data.tech || []).length);
+    }
+
+    var live = document.getElementById('previewLive');
+    if (live) {
+        live.href = data.live || '#';
+        live.classList.toggle('hidden', !data.live);
+    }
+
+    var github = document.getElementById('previewGithub');
+    if (github) {
+        github.href = data.github || '#';
+        github.classList.toggle('hidden', !data.github);
+    }
+
+    var detail = document.getElementById('previewDetail');
+    if (detail) {
+        detail.href = data.detail || '#';
+        detail.classList.toggle('hidden', !data.detail);
+    }
+
+    openModal('previewModal');
+};
+
+/* Lightbox sertifikat */
+window.openLightbox = function(src) {
+    var img = document.getElementById('lightboxImage');
+    if (!img) return;
+    img.src = src;
+    openModal('lightbox');
+};
+
+/* Transisi halaman saat pindah halaman */
+(function() {
+    function revealSection(el) {
+        if (!el) return;
+        el.classList.remove('section-enter');
+        void el.offsetWidth; // paksa reflow agar animasi bisa diulang
+        el.classList.add('section-enter');
+    }
+
+    function scrollToHash(hash) {
+        var target = document.querySelector(hash);
+        if (!target) return;
+
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        revealSection(target);
+
+        if (history.replaceState) {
+            history.replaceState(null, '', hash);
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (!link) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+        var href = link.getAttribute('href');
+        if (!href) return;
+        if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+
+        // Anchor di halaman yang sama: cukup scroll + animasi section,
+        // jangan pernah memudarkan seluruh body (dulu menyebabkan layar hitam).
+        if (href.charAt(0) === '#') {
+            if (href.length < 2) return;
+            e.preventDefault();
+            scrollToHash(href);
+            return;
+        }
+
+        var url;
+        try {
+            url = new URL(link.href, window.location.href);
+        } catch (err) {
+            return;
+        }
+
+        if (url.origin !== window.location.origin) return;
+
+        // Link ke halaman yang sama dengan beda hash juga tidak perlu reload.
+        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+            e.preventDefault();
+            if (url.hash) {
+                scrollToHash(url.hash);
+            }
+            return;
+        }
+
+        e.preventDefault();
+        document.body.classList.add('page-exit');
+        setTimeout(function() { window.location.href = url.href; }, 200);
+    });
+
+    // Kembalikan halaman ke kondisi normal, termasuk saat browser memakai bfcache.
+    window.addEventListener('pageshow', function(event) {
+        document.body.classList.remove('page-exit');
+
+        if (event.persisted) {
+            var main = document.querySelector('main.page-enter');
+            if (main) {
+                main.style.animation = 'none';
+                void main.offsetWidth;
+                main.style.animation = '';
+            }
+        }
+    });
+
+    window.addEventListener('hashchange', function() {
+        document.body.classList.remove('page-exit');
     });
 })();
 </script>
