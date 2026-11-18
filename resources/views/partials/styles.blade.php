@@ -473,6 +473,13 @@
     .dark .timeline-item::before { border-color: #18181b; }
 
     /* ---------- Modal preview ---------- */
+    #previewModal.hidden,
+    #lightbox.hidden,
+    #previewModal[style*="display: none"],
+    #lightbox[style*="display: none"] {
+        display: none !important;
+        pointer-events: none !important;
+    }
     .preview-scroll { max-height: 88vh; overflow-y: auto; }
 
     /* ---------- Cetak CV ---------- */

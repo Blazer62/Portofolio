@@ -1,4 +1,4 @@
-<div id="previewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm" onclick="if (event.target === this) closeModal('previewModal')">
+<div id="previewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm" style="display: none;" onclick="if (event.target === this) closeModal('previewModal')">
     <div class="preview-scroll w-full max-w-3xl rounded-[2rem] shadow-2xl border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200">
         <div class="relative">
             <img id="previewImage" src="" alt="" class="hidden w-full h-64 md:h-80 object-cover rounded-t-[2rem]">
@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<div id="lightbox" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-sm" onclick="if (event.target === this) closeModal('lightbox')">
+<div id="lightbox" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-sm" style="display: none;" onclick="if (event.target === this) closeModal('lightbox')">
     <button onclick="closeModal('lightbox')" aria-label="Tutup" class="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-red-500 transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
     </button>

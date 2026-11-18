@@ -30,11 +30,7 @@
 
     links.forEach(function(link) {
         link.addEventListener('click', function() {
-            var href = link.getAttribute('href') || '';
-            // Hanya tutup menu bila itu anchor di halaman yang sama
-            if (href.charAt(0) === '#' || (href.indexOf('#') !== -1 && href.indexOf(window.location.pathname) !== -1)) {
-                closeMenu();
-            }
+            closeMenu();
         });
     });
 
@@ -130,6 +126,7 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
 function openModal(id) {
     const el = document.getElementById(id);
     if (!el) return;
+    el.style.display = 'flex';
     el.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
@@ -137,6 +134,7 @@ function openModal(id) {
 function closeModal(id) {
     const el = document.getElementById(id);
     if (!el) return;
+    el.style.display = 'none';
     el.classList.add('hidden');
     document.body.style.overflow = '';
 }
@@ -384,18 +382,15 @@ window.openLightbox = function(src) {
         }
     }
 
-    document.addEventListener('click', function(e) {
-        var link = e.target.closest('a');
-        if (!link) return;
+    function handleNavigation(e, link) {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         if (link.target === '_blank' || link.hasAttribute('download')) return;
 
         var href = link.getAttribute('href');
         if (!href) return;
-        if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+        if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0 || href.indexOf('javascript:') === 0) return;
 
-        // Anchor di halaman yang sama: cukup scroll + animasi section,
-        // jangan pernah memudarkan seluruh body (dulu menyebabkan layar hitam).
+        // Anchor di halaman yang sama: cukup scroll halus ke elemen bersangkutan
         if (href.charAt(0) === '#') {
             if (href.length < 2) return;
             e.preventDefault();
@@ -410,9 +405,10 @@ window.openLightbox = function(src) {
             return;
         }
 
+        // Tautan eksternal: biarkan browser menangani secara default
         if (url.origin !== window.location.origin) return;
 
-        // Link ke halaman yang sama dengan beda hash juga tidak perlu reload.
+        // Link ke halaman yang sama dengan beda hash
         if (url.pathname === window.location.pathname && url.search === window.location.search) {
             if (url.hash) {
                 e.preventDefault();
@@ -421,10 +417,44 @@ window.openLightbox = function(src) {
             return;
         }
 
-        // Untuk link ke halaman lain (CV, Blog, Projects, Login, dsb):
-        // Biarkan browser melakukan navigasi alami tanpa e.preventDefault().
-        // Ini memastikan klik link 100% berfungsi di iframe, extension mobile simulator, smartphone, dan desktop.
+        // Untuk tautan ke halaman lain (CV, Blog, Detail Proyek, Login, dsb):
+        // Eksekusi navigasi langsung dengan window.location.href agar ekstensi mobile simulator,
+        // iframe, smartphone, maupun desktop selalu berpindah URL secara instan tanpa tertahan.
+        e.preventDefault();
+        window.location.href = url.href;
+    }
+
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (!link) return;
+        handleNavigation(e, link);
     });
+
+    // Dukungan simulator mobile berbasis touch / touch emulation
+    var lastNavTime = 0;
+    document.addEventListener('touchend', function(e) {
+        var link = e.target.closest('a');
+        if (!link) return;
+        var href = link.getAttribute('href');
+        if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+        if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+        var url;
+        try {
+            url = new URL(link.href, window.location.href);
+        } catch (err) {
+            return;
+        }
+
+        if (url.origin !== window.location.origin) return;
+        if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+
+        var now = Date.now();
+        if (now - lastNavTime < 800) return;
+        lastNavTime = now;
+
+        window.location.href = url.href;
+    }, { passive: true });
 
     // Kembalikan halaman ke kondisi normal, termasuk saat browser memakai bfcache.
     window.addEventListener('pageshow', function(event) {
