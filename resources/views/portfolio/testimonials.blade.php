@@ -4,6 +4,8 @@
         ? $testimonials->flatten(1)
         : $testimonials;
     $totalTestimonials = $allTestimonials->count();
+    $visibleTestimonials = 3;
+    $hiddenTestimonials = max(0, $totalTestimonials - $visibleTestimonials);
 @endphp
 
 <section id="testimonials" class="py-24 px-6 relative overflow-hidden">
@@ -111,7 +113,7 @@
                 @php
                     $photo = \App\Support\Media::url($testimonial->photo);
                 @endphp
-                <figure class="rounded-[2rem] border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200 p-6 md:p-7 shadow-xs relative overflow-hidden transition-all hover:border-emerald-500/40">
+                <figure data-testimonial-item class="rounded-[2rem] border dark:bg-zinc-900 dark:border-zinc-800 bg-white border-zinc-200 p-6 md:p-7 shadow-xs relative overflow-hidden transition-all hover:border-emerald-500/40 @if($loop->index >= $visibleTestimonials) hidden testimonial-extra @endif">
                     {{-- Ikon kutipan transparan --}}
                     <i class="fas fa-quote-right absolute -top-2 right-4 text-7xl text-emerald-500/10 dark:text-emerald-500/5 pointer-events-none"></i>
 
@@ -151,7 +153,52 @@
                     <p class="text-xs mt-1">Jadilah yang pertama menuliskan testimoni menggunakan form di sebelah!</p>
                 </div>
                 @endforelse
+
+                @if($hiddenTestimonials > 0)
+                <div class="pt-2 flex justify-center">
+                    <button type="button" id="toggleTestimonials" aria-expanded="false" aria-controls="testimonials"
+                        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-bold border dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 border-zinc-300 text-zinc-700 hover:bg-zinc-100 active:scale-95 transition-all">
+                        <span id="toggleTestimonialsText">Tampilkan semua testimoni ({{ $hiddenTestimonials }} lainnya)</span>
+                        <i id="toggleTestimonialsIcon" class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
+                    </button>
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </section>
+
+@if($hiddenTestimonials > 0)
+@push('scripts')
+<script>
+    (function () {
+        const button = document.getElementById('toggleTestimonials');
+        if (!button) return;
+
+        const label = document.getElementById('toggleTestimonialsText');
+        const icon = document.getElementById('toggleTestimonialsIcon');
+        const hiddenCount = {{ $hiddenTestimonials }};
+        let expanded = false;
+
+        button.addEventListener('click', function () {
+            expanded = !expanded;
+            button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+
+            document.querySelectorAll('.testimonial-extra').forEach(function (card) {
+                card.classList.toggle('hidden', !expanded);
+            });
+
+            label.textContent = expanded
+                ? 'Sembunyikan testimoni'
+                : 'Tampilkan semua testimoni (' + hiddenCount + ' lainnya)';
+
+            icon.classList.toggle('rotate-180', expanded);
+
+            if (!expanded) {
+                document.getElementById('testimonials').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    })();
+</script>
+@endpush
+@endif

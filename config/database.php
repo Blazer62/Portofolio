@@ -97,6 +97,14 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // Neon/PgBouncer (connection pooler) tidak selalu kompatibel dengan
+            // prepared statement native PostgreSQL. Setelah kolom diubah
+            // (mis. VARCHAR -> TEXT), prepared statement lama di pooler bisa
+            // memunculkan error "cached plan must not change result type".
+            // Emulasi prepared statement mencegah error tersebut.
+            'options' => extension_loaded('pdo_pgsql') ? [
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ] : [],
         ],
 
         'sqlsrv' => [

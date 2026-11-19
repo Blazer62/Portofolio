@@ -44,7 +44,7 @@
 
         /* 1. Hilangkan semua elemen web global yang bukan bagian lembar CV */
         nav,
-        footer,
+        body > footer,
         #particles-canvas,
         #scrollTopBtn,
         .loading-bar,
@@ -154,7 +154,7 @@
 
     $hardSkills = $skills->get('hard', collect());
     $softSkills = $skills->get('soft', collect());
-    $tools = ['Git & GitHub', 'Visual Studio Code', 'Figma (UI/UX)', 'Vercel', 'Chrome DevTools'];
+    $tools = ['Git & GitHub', 'Visual Studio Code', 'Figma (UI/UX)', 'Vercel'];
 
     $interests = collect(preg_split('/[\r\n,]+/', (string) $siteProfile->interests))
         ->map(fn ($item) => trim($item))
@@ -464,7 +464,7 @@
 
             {{-- Footer CV --}}
             <footer class="px-8 py-2.5 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-2 text-[9px] text-zinc-400 bg-white">
-                <span>CV Resmi {{ $siteProfile->name }} &bull; Frontend Developer Intern</span>
+                <span>CV Resmi {{ $siteProfile->name }} &bull; {{ $siteProfile->headline }}</span>
                 <span>Terakhir diperbarui: {{ now()->locale('id')->translatedFormat('F Y') }}</span>
             </footer>
         </article>

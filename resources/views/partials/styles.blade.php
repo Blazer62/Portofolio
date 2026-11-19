@@ -485,7 +485,7 @@
     /* ---------- Cetak CV ---------- */
     @media print {
         body { background: #fff !important; color: #111 !important; }
-        #particles-canvas, nav, footer, #scrollTopBtn, .loading-bar, .no-print { display: none !important; }
+        #particles-canvas, nav, body > footer, #scrollTopBtn, .loading-bar, .no-print { display: none !important; }
         main { padding: 0 !important; }
         .print-card {
             box-shadow: none !important;
